@@ -3,6 +3,7 @@
 
 #include <QMainWindow>
 
+#include "vkaudio.h"
 #include "vkauth.h"
 
 namespace Ui {
@@ -16,10 +17,14 @@ class MainWindow : public QMainWindow
 public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
-    VkAuth vk;
 
 private:
     Ui::MainWindow *ui;
+    VkAudio* vkAudio_;
+    VkAuth* vkAuth_;
+
+public slots:
+    void slotInitVkAudio();
 };
 
 #endif // MAINWINDOW_H
