@@ -25,6 +25,7 @@ private:
 
 public slots:
     void slotInitVkAudio();
+    void slotFillTable();
 };
 
 #endif // MAINWINDOW_H

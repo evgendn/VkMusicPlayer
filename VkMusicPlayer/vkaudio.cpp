@@ -32,9 +32,9 @@ VkAudio::VkAudio(QString token, QString userId,
     }
 }
 
-QString VkAudio::getReplyJson() const
+QVector<QPair<QString, QStringList> > VkAudio::getSongs() const
 {
-    return replyJson_;
+    return songs_;
 }
 
 void VkAudio::slotReplyFinished()
@@ -65,15 +65,30 @@ void VkAudio::slotManipulateJson()
         QStringList properties;
         properties.push_back(jsonArray[i].toObject()["artist"].toString());
         properties.push_back(jsonArray[i].toObject()["title"].toString());
-        properties.push_back(jsonArray[i].toObject()["duration"].toString());
+
+        // Продолжительность из секунд нужно
+        // перевести в минуты и секунды для красоты.
+        QString duration = "";
+        int min = 0;
+        int sec = jsonArray[i].toObject()["duration"].toDouble();
+        min = sec / 60;
+        sec %= 60;
+        if (sec < 10) {
+            duration = QString::number(min) + ":0" + QString::number(sec);
+        }
+        else {
+            duration = QString::number(min) + ":" + QString::number(sec);
+        }
+        properties.push_back(duration);
+
 
         QString url = jsonArray[i].toObject()["url"].toString();
         url = url.split("?")[0];
 
-        songs.push_back(QPair<QString, QStringList>(url, properties));
+        songs_.push_back(QPair<QString, QStringList>(url, properties));
     }
 
-    if (data.isEmpty() == false) {
+    if (songs_.isEmpty() == false) {
         emit haveReadySongs();
     }
 

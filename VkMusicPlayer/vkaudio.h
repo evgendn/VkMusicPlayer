@@ -20,7 +20,7 @@ class VkAudio : public QObject
     Q_OBJECT
 public:
     explicit VkAudio(QString token, QString userId, QObject *parent = 0);
-    QString getReplyJson() const;
+    QVector<QPair<QString, QStringList> > getSongs() const;
 private:
     QString accessToken_;
     QString userId_;
@@ -29,7 +29,7 @@ private:
     QUrl audioGet_;
     QString replyJson_;
     // Я ебал, была же вроде unsorted map в 4.8.
-    QQueue<QPair<QString, QStringList> > songs;
+    QVector<QPair<QString, QStringList> > songs_;
     class EmptyParamsException
     {
     public:
