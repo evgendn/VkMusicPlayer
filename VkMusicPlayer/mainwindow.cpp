@@ -9,6 +9,12 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
 
+    // Настройка плеера.
+    player_ = new QMediaPlayer(this);
+    player_->setVolume(50);
+    playlist_ = new QMediaPlaylist(this);
+
+    // Настройка атрибутов таблицы.
     ui->tableWidget->setColumnCount(3);
     ui->tableWidget->setGeometry(10, 10, 640, 380);
     ui->tableWidget->setColumnWidth(0, 250);
@@ -21,6 +27,7 @@ MainWindow::MainWindow(QWidget *parent) :
     headers.push_back("Duration");
     ui->tableWidget->setHorizontalHeaderLabels(headers);
 
+    // Авторизация
     vkAuth_ = new VkAuth(this);
     connect(vkAuth_, SIGNAL(haveToken()), this, SLOT(slotInitVkAudio()));
 }
@@ -59,6 +66,10 @@ void MainWindow::slotFillTable()
             ui->tableWidget->setItem(row, column, data);
             ++column;
         }
+        // Добавляем песню в плейлист.
+        playlist_->addMedia(QUrl(itr->first));
         ++row;
     }
+    player_->setPlaylist(playlist_);
+    playlist_->setCurrentIndex(0);
 }

@@ -25,10 +25,12 @@ private:
     QMap<QString, QString> permissions_;
     QWebEngineView* view_;
 signals:
+    // Пикает, когда получили токен.
     void haveToken();
-//    void unsuccess();
 public slots:
+    // Забираем токен и ид-шник из url.
     void slotUrlChange(QUrl url);
+    // Смотрим токен(пустой или нет) и пускаем сигнал haveToken()
     void slotCheckToken();
 };
 

@@ -48,12 +48,17 @@ private:
     };
 
 private slots:
+    // Удаляем reply, когда он больше не нужен.
     void slotReplyFinished();
+    // Получем ответ(json) и пускаем сигнал gotReply().
     void slotReadReply();
+    // Пакуем атрибуты из json-на в вектор и пускаем сигнал haveReadySongs().
     void slotManipulateJson();
 
 signals:
+    // Пикаем, когда получили ответ.
     void gotReply();
+    // Пикаем, когда запаковали вектор.
     void haveReadySongs();
 };
 

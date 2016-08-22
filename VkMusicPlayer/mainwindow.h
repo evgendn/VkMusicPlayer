@@ -2,6 +2,8 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#include <QMediaPlayer>
+#include <QMediaPlaylist>
 
 #include "vkaudio.h"
 #include "vkauth.h"
@@ -22,9 +24,13 @@ private:
     Ui::MainWindow *ui;
     VkAudio* vkAudio_;
     VkAuth* vkAuth_;
+    QMediaPlayer* player_;
+    QMediaPlaylist* playlist_;
 
 public slots:
+    // Заполнение токеном и идшником для получения списка песен.
     void slotInitVkAudio();
+    // Заполение таблицы этими песнями.
     void slotFillTable();
 };
 
