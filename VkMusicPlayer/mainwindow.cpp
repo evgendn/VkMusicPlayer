@@ -65,6 +65,18 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(this, SIGNAL(sendQInt64(qint64)),
             player_, SLOT(setPosition(qint64)));
 
+    // Переход на следующую песню(автоматически).
+    connect(playlist_, SIGNAL(currentIndexChanged(int)),
+            this, SLOT(slotPlayNextSong(int)));
+    // Управление с помощью кнопок.
+    connect(ui->buttonPlayPause, SIGNAL(pressed()),
+            player_, SLOT(play()));
+    connect(ui->buttonNext, SIGNAL(pressed()),
+            this, SLOT(slotButtonNextSong()));
+    connect(ui->buttonPrevious, SIGNAL(pressed()),
+            this, SLOT(slotButtonPreviousSong()));
+    connect(ui->buttonStop, SIGNAL(pressed()),
+            player_, SLOT(stop()));
 }
 
 MainWindow::~MainWindow()
@@ -141,4 +153,23 @@ void MainWindow::slotSetPosition(int data)
 {
     qint64 data64 = static_cast<qint64>(data);
     emit sendQInt64(data64);
+}
+
+void MainWindow::slotPlayNextSong(int index)
+{
+    ui->tableWidget->selectRow(index);
+}
+
+void MainWindow::slotButtonNextSong()
+{
+    int index = playlist_->nextIndex();
+    ui->tableWidget->selectRow(index);
+    playlist_->next();
+}
+
+void MainWindow::slotButtonPreviousSong()
+{
+    int index = playlist_->previousIndex();
+    ui->tableWidget->selectRow(index);
+    playlist_->previous();
 }

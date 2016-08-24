@@ -27,3 +27,6 @@ HEADERS  += mainwindow.h \
     vkaudio.h
 
 FORMS    += mainwindow.ui
+
+RESOURCES += \
+    resources.qrc

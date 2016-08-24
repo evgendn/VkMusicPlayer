@@ -43,10 +43,16 @@ public slots:
     void slotSetDuration(qint64 data64);
     // Перемотка песни.
     void slotSetPosition(int data);
+    // "Направление" следующей песни.
+    void slotPlayNextSong(int index);
+    void slotButtonNextSong();
+    void slotButtonPreviousSong();
 
 signals:
     void sendInt(int);
     void sendQInt64(qint64);
+    void playNextSong();
+    void playPreviousSong();
 };
 
 #endif // MAINWINDOW_H
