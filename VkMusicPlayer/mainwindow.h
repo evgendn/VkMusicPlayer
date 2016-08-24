@@ -4,6 +4,9 @@
 #include <QMainWindow>
 #include <QMediaPlayer>
 #include <QMediaPlaylist>
+#include <QSlider>
+#include <QTableWidgetItem>
+#include <QTableWidgetSelectionRange>
 
 #include "vkaudio.h"
 #include "vkauth.h"
@@ -26,12 +29,24 @@ private:
     VkAuth* vkAuth_;
     QMediaPlayer* player_;
     QMediaPlaylist* playlist_;
+    qint64 duration;
 
 public slots:
     // Заполнение токеном и идшником для получения списка песен.
     void slotInitVkAudio();
     // Заполение таблицы этими песнями.
     void slotFillTable();
+    // Играется песня при двойном клике на строке таблицы.
+    void slotPlaySong(QTableWidgetItem* tableItem);
+    void slotChangeTrackValue(qint64 data64);
+    // Устанавливаем sliderTrack.range и поле duration этого класса.
+    void slotSetDuration(qint64 data64);
+    // Перемотка песни.
+    void slotSetPosition(int data);
+
+signals:
+    void sendInt(int);
+    void sendQInt64(qint64);
 };
 
 #endif // MAINWINDOW_H

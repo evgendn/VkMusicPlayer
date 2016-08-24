@@ -13,6 +13,14 @@ MainWindow::MainWindow(QWidget *parent) :
     player_ = new QMediaPlayer(this);
     player_->setVolume(50);
     playlist_ = new QMediaPlaylist(this);
+    duration = 0;
+
+    ui->sliderVolume->setRange(0, 100);
+    ui->sliderVolume->setSliderPosition(50);
+    ui->sliderVolume->setSingleStep(10);
+
+    ui->sliderTrack->setSliderPosition(0);
+    ui->sliderTrack->setSingleStep(10);
 
     // Настройка атрибутов таблицы.
     ui->tableWidget->setColumnCount(3);
@@ -30,6 +38,33 @@ MainWindow::MainWindow(QWidget *parent) :
     // Авторизация
     vkAuth_ = new VkAuth(this);
     connect(vkAuth_, SIGNAL(haveToken()), this, SLOT(slotInitVkAudio()));
+
+    // Выделение всей строки и всех колонок, а не одной клетки.
+    connect(ui->tableWidget, SIGNAL(itemDoubleClicked(QTableWidgetItem*)),
+            this, SLOT(slotPlaySong(QTableWidgetItem*)));
+
+    // Настройка громкости.
+    connect(ui->sliderVolume, SIGNAL(valueChanged(int)),
+            player_, SLOT(setVolume(int)));
+
+    // Переводим position из qint64 to int и
+    // и меняем slider value.
+    connect(player_, SIGNAL(positionChanged(qint64)),
+            this, SLOT(slotChangeTrackValue(qint64)));
+    connect(this, SIGNAL(sendInt(int)),
+            ui->sliderTrack, SLOT(setValue(int)));
+
+    // Ловим продолжительность песни.
+    connect(player_, SIGNAL(durationChanged(qint64)),
+            this, SLOT(slotSetDuration(qint64)));
+
+    // Перематываем с помощью slider и
+    // переводим int to qint64 для player.position.
+    connect(ui->sliderTrack, SIGNAL(sliderMoved(int)),
+            this, SLOT(slotSetPosition(int)));
+    connect(this, SIGNAL(sendQInt64(qint64)),
+            player_, SLOT(setPosition(qint64)));
+
 }
 
 MainWindow::~MainWindow()
@@ -42,7 +77,8 @@ void MainWindow::slotInitVkAudio()
 {
     vkAudio_ = new VkAudio(vkAuth_->getAccessToken(),
                            vkAuth_->getUserId(),
-                           this);
+                           this
+                           );
 
     connect(vkAudio_, SIGNAL(haveReadySongs()), this, SLOT(slotFillTable()));
 }
@@ -62,6 +98,7 @@ void MainWindow::slotFillTable()
         // Засовываем в таблицу исполнителя, название и длительность песни.
         for (i; i != itr->second.constEnd(); ++i) {
             QTableWidgetItem* data = new QTableWidgetItem();
+            data->setFlags(data->flags() ^ Qt::ItemIsEditable);
             data->setText(*i);
             ui->tableWidget->setItem(row, column, data);
             ++column;
@@ -72,4 +109,36 @@ void MainWindow::slotFillTable()
     }
     player_->setPlaylist(playlist_);
     playlist_->setCurrentIndex(0);
+}
+
+void MainWindow::slotPlaySong(QTableWidgetItem* tableItem)
+{
+    // Выделение всей строки и всех колонок, а не одной клетки.
+    ui->tableWidget->setRangeSelected(QTableWidgetSelectionRange(
+                                          tableItem->row(), 0,
+                                          tableItem->row(), 2), true
+                                      );
+
+    playlist_->setCurrentIndex(tableItem->row());
+    player_->play();
+}
+
+void MainWindow::slotChangeTrackValue(qint64 data64)
+{
+    int data = static_cast<int>(data64);
+//    qDebug() << data;
+    emit sendInt(data);
+}
+
+void MainWindow::slotSetDuration(qint64 data64)
+{
+    duration = static_cast<int>(data64);
+    ui->sliderTrack->setRange(0, duration);
+    //    qDebug() << duration;
+}
+
+void MainWindow::slotSetPosition(int data)
+{
+    qint64 data64 = static_cast<qint64>(data);
+    emit sendQInt64(data64);
 }
