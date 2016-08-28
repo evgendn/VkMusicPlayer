@@ -16,6 +16,7 @@ class VkAuth : public QMainWindow
     Q_OBJECT
 public:
     explicit VkAuth(QWidget *parent = 0);
+    ~VkAuth();
     QString getAccessToken() const;
     QString getUserId() const;
 private:

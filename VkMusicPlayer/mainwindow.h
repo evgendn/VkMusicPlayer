@@ -30,6 +30,8 @@ private:
     QMediaPlayer* player_;
     QMediaPlaylist* playlist_;
     qint64 duration;
+    // Для обработки кнопки play/pause.
+    bool isPlay;
 
 public slots:
     // Заполнение токеном и идшником для получения списка песен.
@@ -47,6 +49,8 @@ public slots:
     void slotPlayNextSong(int index);
     void slotButtonNextSong();
     void slotButtonPreviousSong();
+    // Обработка кнопки play/pause.
+    void slotButtonPressed();
 
 signals:
     void sendInt(int);

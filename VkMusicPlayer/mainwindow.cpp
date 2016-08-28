@@ -8,6 +8,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
+    isPlay = false;
 
     // Настройка плеера.
     player_ = new QMediaPlayer(this);
@@ -70,7 +71,7 @@ MainWindow::MainWindow(QWidget *parent) :
             this, SLOT(slotPlayNextSong(int)));
     // Управление с помощью кнопок.
     connect(ui->buttonPlayPause, SIGNAL(pressed()),
-            player_, SLOT(play()));
+            this, SLOT(slotButtonPressed()));
     connect(ui->buttonNext, SIGNAL(pressed()),
             this, SLOT(slotButtonNextSong()));
     connect(ui->buttonPrevious, SIGNAL(pressed()),
@@ -132,7 +133,9 @@ void MainWindow::slotPlaySong(QTableWidgetItem* tableItem)
                                       );
 
     playlist_->setCurrentIndex(tableItem->row());
-    player_->play();
+//    player_->play();
+//    isPlay = true;
+    slotButtonPressed();
 }
 
 void MainWindow::slotChangeTrackValue(qint64 data64)
@@ -172,4 +175,20 @@ void MainWindow::slotButtonPreviousSong()
     int index = playlist_->previousIndex();
     ui->tableWidget->selectRow(index);
     playlist_->previous();
+}
+
+void MainWindow::slotButtonPressed()
+{
+    if (isPlay == true) {
+        player_->pause();
+        ui->buttonPlayPause->setIcon(QIcon(":/images/images/play.png"));
+        ui->buttonPlayPause->setIconSize(QSize(70, 70));
+        isPlay = false;
+    }
+    else {
+        player_->play();
+        ui->buttonPlayPause->setIcon(QIcon(":/images/images/pause.png"));
+        ui->buttonPlayPause->setIconSize(QSize(70, 70));
+        isPlay = true;
+    }
 }
