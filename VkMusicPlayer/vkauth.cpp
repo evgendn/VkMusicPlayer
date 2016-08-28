@@ -9,13 +9,18 @@ VkAuth::VkAuth(QWidget *parent) : QMainWindow(parent)
                 "display=popup&"
                 "v=5.53&"
                 "response_type=token";
-    view_ = new QWebEngineView(parent);
+    view_ = new QWebEngineView();
     view_->load(QUrl(this->urlAuth_));
     view_->show();
 
     connect(view_, SIGNAL(urlChanged(QUrl)), this, SLOT(slotUrlChange(QUrl)));
     connect(view_, SIGNAL(loadFinished(bool)), this, SLOT(slotCheckToken()));
     connect(this, SIGNAL(haveToken()), view_, SLOT(close()));
+}
+
+VkAuth::~VkAuth()
+{
+    delete view_;
 }
 
 QString VkAuth::getAccessToken() const
